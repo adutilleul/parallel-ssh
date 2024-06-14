@@ -13,47 +13,58 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+from pathlib import Path
 from setuptools import setup, find_packages
 
+import pkg_resources
 import versioneer
-
 
 cmdclass = versioneer.get_cmdclass()
 
-setup(name='parallel-ssh',
-      version=versioneer.get_version(),
-      cmdclass=cmdclass,
-      description='Asynchronous parallel SSH library',
-      long_description=open('README.rst').read(),
-      author='Panos Kittenis',
-      author_email='zuboci@yandex.com',
-      url="https://github.com/ParallelSSH/parallel-ssh",
-      license='LGPLv2.1',
-      packages=find_packages(
-          '.', exclude=('embedded_server', 'embedded_server.*',
-                        'tests', 'tests.*',
-                        '*.tests', '*.tests.*')
-      ),
-      install_requires=[
-          'gevent', 'ssh2-python', 'ssh-python'],
-      classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)',
-          'Intended Audience :: Developers',
-          'Operating System :: OS Independent',
-          'Programming Language :: Python',
-          'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.6',
-          'Programming Language :: Python :: 3.7',
-          'Programming Language :: Python :: 3.8',
-          'Programming Language :: Python :: 3.9',
-          'Programming Language :: Python :: 3.10',
-          'Topic :: System :: Networking',
-          'Topic :: Software Development :: Libraries',
-          'Topic :: Software Development :: Libraries :: Python Modules',
-          'Operating System :: POSIX :: Linux',
-          'Operating System :: POSIX :: BSD',
-          'Operating System :: Microsoft :: Windows',
-          'Operating System :: MacOS :: MacOS X',
-      ],
-      )
+
+def parse_requirements():
+    with Path('requirements.txt').open() as requirements_txt:
+        install_requires = [
+            str(requirement) for requirement in
+            pkg_resources.parse_requirements(requirements_txt)
+        ]
+        return install_requires
+    return []
+
+
+setup(
+    name='parallel-ssh',
+    version=versioneer.get_version(),
+    cmdclass=cmdclass,
+    description='Asynchronous parallel SSH library',
+    long_description=open('README.rst').read(),
+    author='Panos Kittenis',
+    author_email='zuboci@yandex.com',
+    url="https://github.com/ParallelSSH/parallel-ssh",
+    license='LGPLv2.1',
+    packages=find_packages('.',
+                           exclude=('embedded_server', 'embedded_server.*',
+                                    'tests', 'tests.*', '*.tests',
+                                    '*.tests.*')),
+    install_requires=parse_requirements(),
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)',
+        'Intended Audience :: Developers',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Topic :: System :: Networking',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: POSIX :: BSD',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: MacOS :: MacOS X',
+    ],
+)
